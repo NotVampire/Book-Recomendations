@@ -28,23 +28,24 @@ timer.start_timer()
 min_overlap = data.determine_overlap(goodreads_book_ids)
 
 # Finding users that have given good ratings to more than 1 book from the list
-recomended_books = []
-recomended_users = data.find_duplicates(user_list, min_overlap)
+recommended_books = []
+recommended_users = data.find_duplicates(user_list, min_overlap)
 timer.finish_timer("Users with similar interests are found")
 
 
 # Finding books that these users gave good ratings to
 timer.start_timer()
-users = [i[0] for i in recomended_users]
-books = data.find_books_from_users(users)
-print(f"Length of recomended books: {len(books)}")
+users = [i[0] for i in recommended_users]
+data.create_user_temp_table(users)
+books = data.find_books_from_users()
+print(f"Length of recommended books: {len(books)}")
 timer.finish_timer("Books that these users gave good ratings to are found")
 
 
 # Giving final 100 recommendations
 timer.start_timer()
 hundred_recommendations = []
-recommendations = data.find_recommended_books(books, recomended_users)
+recommendations = data.find_recommended_books(books, recommended_users)
 for i in range(0, 100):
     hundred_recommendations.append(recommendations[i][0])
 goodreads_ids = data.find_goodreads_book_id(hundred_recommendations)

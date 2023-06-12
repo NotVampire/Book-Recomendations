@@ -46,13 +46,26 @@ def find_duplicates(lst, number):
 
     return duplicates
 
+# Creating a temporary table for the users and joining it with the book_id table
+def create_user_temp_table(users):
+    cursor.execute("CREATE TEMPORARY TABLE temp_user(user_id INTEGER PRIMARY KEY)")
+    cursor.executemany("INSERT INTO temp_user(user_id) VALUES (?)", [(user,) for user in users])
+    cursor.execute("CREATE INDEX idx_user_id_temp ON temp_user (user_id);")
+    connection.commit()
+
 # Takes list of users that gave ratings to more than required number of books good rating as an input and outputs book ids of books that this users gave good ratings
-def find_books_from_users(users):
+def find_books_from_users():
     print("Searching for books that these users have given good ratings to...")
-    cursor.execute(f"SELECT book_id FROM user_id WHERE user_id IN ({', '.join(str(x) for x in users)}) AND rating > 3")
+    cursor.execute("""
+    SELECT book_id 
+    FROM book_id 
+    INNER JOIN temp_user 
+    ON book_id.user_id = temp_user.user_id 
+    WHERE book_id.rating > 3
+    """)
     tuples = cursor.fetchall()
     result = [row[0] for row in tuples]
-
+    cursor.execute("DROP TABLE temp_user")
     return result
 
 # Finds books that more than one percent of chosen users gave good ratings and sorts the list
