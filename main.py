@@ -19,7 +19,6 @@ try:
     user_list.extend(data.good_rating_users(goodreads_book_ids))
 except Exception as e:
     "Error while searching for ratings"
-print(f"Found users: {len(user_list)}")
 timer.finish_timer("Users that gave good rating to at least one book from the list are found")
 
 
@@ -31,6 +30,7 @@ min_overlap = data.determine_overlap(goodreads_book_ids)
 recommended_books = []
 recommended_users = data.find_duplicates(user_list, min_overlap)
 timer.finish_timer("Users with similar interests are found")
+print(f"Found users: {len(recommended_users)}")
 
 
 # Finding books that these users gave good ratings to

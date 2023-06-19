@@ -46,7 +46,7 @@ def find_book_name(book_ids):
             try:
                 link = "https://www.goodreads.com/book/show/" + str(id)
                 driver.get(link)
-                driver.implicitly_wait(2)
+                driver.implicitly_wait(1)
                 title = driver.find_element(By.CSS_SELECTOR, "h1.Text.Text__title1").text
                 recommend.append([title, link])
                 print(recommend[len(recommend)-1])
