@@ -1,3 +1,4 @@
 *.db
 *.log
 test.py
+reviews.tsv
