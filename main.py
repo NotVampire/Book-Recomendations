@@ -44,12 +44,11 @@ timer.finish_timer("Books that these users gave good ratings to are found")
 
 # Giving final 100 recommendations
 timer.start_timer()
-hundred_recommendations = []
+recommendations_lst = []
 recommendations = data.find_recommended_books(books, recommended_users)
-for i in range(0, 100):
-    hundred_recommendations.append(recommendations[i][0])
-goodreads_ids = data.find_goodreads_book_id(hundred_recommendations)
-filtered_recommendations = [x for x in goodreads_ids if x not in goodreads_book_ids]
+for i in range(0, 30):
+    recommendations_lst.append(recommendations[i][0])
+filtered_recommendations = [x for x in recommendations_lst if x not in goodreads_book_ids]
 print("Final recommendations: ")
 recommend = scraper.find_book_name(filtered_recommendations)
 timer.finish_timer("Recommended books are found")

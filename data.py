@@ -2,7 +2,7 @@ import sqlite3
 from collections import Counter
 
 # specifying database file
-db = "db.db"
+db = f'./data/db.db'
 
 # connection object
 connection = sqlite3.connect(db)
@@ -12,13 +12,7 @@ cursor = connection.cursor()
 
 # Finds users that rated given books more than 3 and outputs their ids
 def good_rating_users(book_ids):
-    print("Searching for users that gave good ratings to books from the list...")
-    statement = f"SELECT book_id_csv FROM book_id_map WHERE book_id IN ({', '.join(str(x) for x in book_ids)})"
-    cursor.execute(statement)
-    tuples = cursor.fetchall()
-    search_book_ids = [row[0] for row in tuples]
-
-    statement = f"SELECT user_id FROM book_id WHERE book_id IN ({', '.join(str(x) for x in search_book_ids)}) AND rating > 3"
+    statement = f"SELECT user_id FROM goodreads WHERE book_id IN ({', '.join(str(x) for x in book_ids)})"
     cursor.execute(statement)
     tuples = cursor.fetchall()
     result = [row[0] for row in tuples]
@@ -58,10 +52,9 @@ def find_books_from_users():
     print("Searching for books that these users have given good ratings to...")
     cursor.execute("""
     SELECT book_id 
-    FROM book_id 
+    FROM goodreads
     INNER JOIN temp_user 
-    ON book_id.user_id = temp_user.user_id 
-    WHERE book_id.rating > 3
+    ON goodreads.user_id = temp_user.user_id 
     """)
     tuples = cursor.fetchall()
     result = [row[0] for row in tuples]
@@ -71,15 +64,8 @@ def find_books_from_users():
 # Finds books that more than one percent of chosen users gave good ratings and sorts the list
 def find_recommended_books(books, recomended_users):
     books_unsorted = find_duplicates(books, int(0.01 * len(recomended_users)))
-    recomendations = sorted(books_unsorted, key=lambda x: x[1], reverse=True)
-    return recomendations
+    recommendations = sorted(books_unsorted, key=lambda x: x[1], reverse=True)
+    return recommendations
 
 # Searches for goodreads book ids
-def find_goodreads_book_id(book_ids):
-    statement = f"SELECT book_id FROM book_id_map WHERE book_id_csv IN ({', '.join(str(x) for x in book_ids)})"
-    cursor.execute(statement)
-    tuples = cursor.fetchall()
-    search_book_ids = [int(row[0]) for row in tuples]
-    cursor.close()
-    connection.close()
-    return search_book_ids
+
